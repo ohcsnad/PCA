@@ -1,1 +1,1 @@
-# PCA
+### This is a project where we created an R package for the purpose of teaching Principal Component Analysis. This project was a collaboration of Statistics graduate students at SDSU. This [vignette](https://rpubs.com/ohcsnad/1032269) explains and showcases our R package.
