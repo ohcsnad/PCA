@@ -1,0 +1,303 @@
+---
+title: "pca-simplified-vignette"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{pca-simplified-vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(pcasimple)
+```
+
+# Introduction
+
+## Group 2 Members
+
+Danielle Cortez, Daniel Cho, David Tu, Angelica Rivera
+
+## Goal of pcasimple
+
+Principal Component Analysis is an extremely useful concept that is covered in STAT 580 that allows users to greatly simplify high-dimensional data without losing much information. However, this concept is complex and hard to learn, especially for students who have never seen it before. This R Package is meant to simplify and streamline the PCA process to assist in the teaching and learning of PCA. The functions of this package translates PCA into an ordered process that will be easier to follow.
+
+### Functions
+
+-   2D Scatter Plots
+-   3D Scatter Plots
+-   PCA Values
+-   Scree Plots
+
+We intend for users to follow these functions in descending order. First, users can use the `plot2D` and `plot3D` functions to visualize a subset of the data with its corresponding principal components to help with visual understanding. Second, users can use `pcvalues` to calculate the PCA loadings (components) and eigenvalues on their full data frame to show how the data frame affects principal components and how the eigenvalues can help determine variance explained. Finally, the user can use a scree plot to visualize the variance explained by each principal component or the total proportion of variance explained by consecutive principal components.
+
+### Included Data
+
+-   **Pima Indians Diabetes Database**: Available on Kaggle, this is a dataset from the National Institute of Diabetes and Digestive Kidney Diseases, collected to help predict whether a patient has diabetes based on diagnostic measurements. Columns include Pregnancies, Glucose, BloodPressure, SkinThickness, Insulin, BMI, DiabetesPedigreeFunction, Age, and Outcome. 
+
+Since Outcome is the response variable for this dataset, we will create a subset of the dataset with just the independent variables. **This same process should be done for any dataset before performing PCA**
+
+```{r}
+pima_diabetes <- pima_diabetes[,-9]
+```
+
+\newpage
+
+# 2D and 3D Principal Component Plots
+
+**Easier Method for Visualizing Principal Components**
+
+**Motivation** The functions `plot2D()` and `plot3D()` were created to give users a more approachable method to visualizing principal components alongside a scatter plot of the data. Principal components are vectors that point in the direction of largest variability in the data. In other words, when plotted, the principal component arrows point in the direction where the data is most spread out. Visualizing components are extremely helpful in understanding the idea of PCA. It is important to note that the principal components are ordered by their magnitude. PC1 points in the direction of strongest variance, PC2 is the orthogonal principal component that points at the second strongest direction of variance, and so on.
+
+Typically, multiple lines of code would be necessary to accomplish this. However, `plot2D()` and `plot3D()` can produce these visuals from a function call, where the plot can be customized through arguments. **It is important to note that the dataframe must be standardized before using these functions.**
+
+## 2D Plots
+
+`plot2D()` produces a 2D scatter plot of the data, which can be customized via its arguments.
+
+The function `plot2D()` has three arguments:
+
+1.  data: a `dataframe` containing two variables
+2.  type: a `character` argument changing the orientation of the plot
+    -   "original": the axes of the scatter plot are the original variables
+    -   "PC": the axes of the scatter plot are the principal components
+3.  arrows: a `logical` argument indicating whether to include the principal components as arrows on the plot
+
+If the requirements of these arguments are not met, then an error message will print to indicate what needs to be changed.
+
+### Data
+
+The function `plot2D()` requires that the data frame is:
+
+-   Standardized
+-   Contain only two variables (two columns)
+
+```{r, echo = F}
+knitr::opts_chunk$set(fig.width=8, fig.height=6) 
+```
+
+```{r}
+pima_scale <- scale(pima_diabetes)
+plot2D(pima_scale)
+```
+
+```{r}
+pima_subset <- subset(pima_scale, select = c("Glucose", "BloodPressure"))
+plot2D(pima_subset)
+```
+
+### Type
+
+The argument type allows users to change the orientation of the scatter plot. If "original" is inputted, then the axes will be in terms of the original variables. If "PC" is inputted, then the axes will be in terms of the principal components of that subset. The default value is "original".
+
+```{r}
+plot2D(pima_subset, type = "PC")
+```
+
+### Principal Component Arrows
+
+Arrows representing the principal components can be included by changing the `logical` value of the argument arrows. If `TRUE` is inputted, then arrows representing the principal components will be included. If `FALSE` is included, then arrows will not be shown. The default value is `FALSE`.
+
+```{r}
+plot2D(pima_subset, arrows = TRUE)
+
+plot2D(pima_subset, type = "PC", arrows = TRUE)
+```
+
+## 3D Plots
+
+`plot3D()` produces a 3D interactive scatter plot of the data using the rgl package, which can be customized via its arguments.
+
+The function `plot3D()` has three arguments:
+
+1.  data: a `dataframe` containing three variables
+2.  type: a `character` argument changing the orientation of the plot
+    -   "original": the axes of the scatter plot are the original variables
+    -   "PC": the axes of the scatter plot are the principal components
+3.  arrows: a `logical` argument indicating whether to include the principal components as arrows on the plot
+
+If the requirements of these arguments are not met, then an error message will print to indicate what needs to be changed.
+
+### Data
+
+The function `plot3D()` requires that the data frame is:
+
+-   Standardized
+-   Contain only three variables (three columns)
+
+However, because the vignette does not support interactive plots, example code will be included.
+
+```{r}
+pima_subset_3 <- subset(pima_scale, select = c("Glucose", "BloodPressure", "BMI"))
+
+plot3D(pima_subset_3)
+```
+
+### Type
+
+The argument type allows users to change the axes of the scatter plot. If "original" is inputted, then the axes will be in terms of the original variables. If "PC" is inputted, then the axes will be in terms of the principal components of that subset. The default value is "original".
+
+```{r}
+plot3D(pima_subset_3, type = "PC")
+```
+
+### Principal Component Arrows
+
+Arrows representing the principal components can be included by changing the `logical` value of the argument arrows. If `TRUE` is inputted, then arrows representing the principal components will be included. If `FALSE` is included, then arrows will not be shown. The default value is `FALSE`.
+
+```{r}
+plot3D(pima_subset_3, arrows = TRUE)
+```
+
+```{r}
+plot3D(pima_subset_3, type = "PC", arrows = TRUE)
+```
+
+## Limitations of 2D and 3D Plots
+
+### 2D Plots
+
+1.  Data frame must be standardized and contain two variables.
+2.  Data must be numeric.
+3.  Because the function only plots a subset of the data, the true principle components of the entire dataframe is absent. As such, this function should only be used to learn and understand principal components.
+
+### 3D Plots
+
+1.  Data frame must be standardized and contain three variables.
+2.  Data must be numeric.
+3.  Because the function only plots a subset of the data, the true principle components of the entire dataframe is absent. As such, this function should only be used to learn and understand principal components.
+4.  The package `rgl` can be incompatible with Mac OS and other operating systems. If the functions do not display interactive plots, it may be necessary to download XQuartz or perform other fixes.
+
+## Similar Functions from STAT 580
+
+-   Base R
+    -   plot()
+    -   arrows()
+-   rgl
+    -   plot3d()
+
+\newpage
+
+# PCA Values
+
+**Motivation** The function `pcvalues()` was created to give users a straightforward approach in performing principal component analysis, and placing the results into a comprehensible format. These results include matrices of eigenvectors, loadings, eigenvalues, and accumulated proportion of variance explained of the principal components. 
+
+`pcvalues()` produces a matrix of values used for principal component analysis which can be customized via its arguments.
+
+The function `pcvalues()` has three arguments:
+
+1.  data: a `dataframe` with quantitative variables
+2.  scale: a `logical` argument indicating whether to standardize the data or not
+3.  digits: a `integer` argument to change the decimal digits
+4.  value: a `character` argument that changes the output of information in the matrix
+    -   "eigenvectors": matrix of eigenvectors of the principal components
+    -   "loadings": matrix of loadings of the principal components
+    -   "eigenvalues": matrix of eigenvalues of the principal components
+    -   "variance": matrix of total variance explained of the principal components
+
+If the requirements of these arguments are not met, then an error message will print to indicate what needs to be changed.
+
+## Data and Scale
+
+The function `pcvalues()` requires that the data frame is standardized. This function has a scale argument that allows users to standardize their data by setting scale = TRUE, where the default setting is set to scale = FALSE for users who have already standardized their data.
+
+## Integer
+
+The digits argument changes the decimal digits of the output values.
+
+## Value
+
+The value argument allows users to change the output of values as eigenvectors, loadings, eigenvalues, or accumulated proportion of variance explained of the principal components. A matrix of eigenvectors can be produced with the argument value = "eigenvectors".
+
+```{r}
+pcvalues(data = pima_diabetes, scale = TRUE, value = "eigenvectors")
+prcomp(scale(pima_diabetes))
+```
+
+We can observe that the row names are our variables, and the column names are the principal components. The eigenvector values are the orthogonal transformation of the covariance matrix, where it represents the direction or projection of the data to a principal component.
+
+$$Loadings = eigenvector * \sqrt{eigenvalue}$$
+The loadings values can be obtained by multiplying the eigenvector by the squared root of the eigenvalue of its respective principal component. This process "loads" the eigenvector with magnitude or variance, where the loading value represents the covariability of each variable with the principal component. This process is simplified with the argument value = "loadings".
+
+```{r}
+pcvalues(data = pima_diabetes, scale = TRUE, value = "loadings")
+```
+
+
+Eigenvalues are obtained by taking the sum of each squared loadings of their respective component. These values represent the amount of variance that can be explained by each principal component. The eigenvalues can be produced with the argument value = "eigenvalues".
+
+```{r}
+pcvalues(data = pima_diabetes, scale = TRUE, value = "eigenvalues")
+```
+
+However, these eigenvalues can be more meaningful by getting the ratio of each eigenvalue to the sum of every eigenvalue. This will give us the percentage of variance explained of each principal component in respect to the percentage of total variance explained of every principal component. In addition, the argument value = "variance" will output the cumulative percentage of variance explained.
+
+```{r}
+pcvalues(data = pima_diabetes, scale = TRUE, value = "variance")
+```
+
+\newpage
+
+# Scree Plots
+
+**Motivation** The function `screeplot()` was created to give users an easy way to visualize the individual and cumulative variance explained by the principal components. Since the goal of PCA is to reducing dimensionality by choosing the least number of principal components that can explain the most variance of our original data, this function will aid us in this decision.
+
+Similar to `plot2D()` and `plot3D()`, `screeplot()` can produce these visuals from a simple  function call, where the plot can be customized through arguments. **It is important to note that the data frame must be standardized before using these functions.**
+
+##screeplot()
+
+`screeplot()` produces a plot, which can be customized via its arguments.
+
+The function `screeplot()` has four arguments:
+
+1.  data: a `dataframe` to perform principal component analysis.
+2.  type: a `character` argument changing the type of information to be displayed on the screeplot
+    -   "eigenvalue": eigenvalues of the principal components
+    -   "cumulative": accumulated proportion of variance explained of the principal components
+3.  varexplain: a `numeric` argument that changes the threshold of total variance explained
+4.  scale: a `logical` argument indicating whether to standardize the data or not
+
+If the requirements of these arguments are not met, then an error message will print to indicate what needs to be changed.
+
+### Data and Scale
+
+The function `screeplot()` requires that the data frame is standardized. This function has a scale argument that allows users to standardize their data by setting scale = TRUE, where the default setting is set to scale = FALSE for users who have already standardized their data.
+
+### Type
+
+The type argument allows users to change the type of screeplot to display eigenvalues or accumulated proportion of variance explained of the principal components. The user can display eigenvalues by setting type = "eigenvalue" or display the accumulated proportion of variance explained by setting type = "cumulative". The default setting is set to cumulative since that is more intuitively understood. 
+
+
+```{r}
+screeplot(pima_diabetes, type = "eigenvalue", scale = T)
+```
+The eigenvalues shown above represent the total amount of variance that can be explained by its principal component. We can observe that the first three components have the highest eigenvalues, where the third component marks the point of the largest drop. This "elbow" joint typically marks where there will be diminishing returns in selecting more principal components. Let's take a look at the accumulated proportion of variance explained to see if there is anything different.
+
+```{r}
+screeplot(pima_diabetes, type = "cumulative", scale = T)
+```
+We can see that if we selected only the first three components, the accumulated proportion of variance explained would be less than 60%. There are many different opinions on the the criteria of choosing the number of components as it depends on the context of the research. However, this function allows flexibility in setting their thresholds for their own needs with the varexplain argument.
+
+### Varexplain
+
+The varexplain argument is supplementary to the type = "cumulative" argument as it allows users to change the threshold of the total variance explained that is shown by a dashed, red line. This will aid in visualizing the number of principal components that are below and above the threshold. The default setting is set to 0.80, and is bounded between 0 and 1.
+
+```{r}
+screeplot(pima_diabetes, varexplain = 0.90, type = "cumulative", scale = T)
+```
+
+**After selecting components**
+
+Based on the 90 percent threshold, we would select the first six principal components and remove the last two. This process reduces dimensionality by eliminating the data points of the variables that were in the principal components that explained the least amount of variance. It is important to note that we are not eliminating variables as a whole, but extracting the more important parts of the variables into a smaller space or less dimensions as defined in the selection of the number of principal components.
+
+Users can go further by using their principal components as predictors for their linear regression models, also known as principle component regression. However, we will not cover how to perform principle component regression, but this [link](https://www.statology.org/principal-components-regression/) will provide more information.
+
+
+Principal Component Analysis is a very useful tool in reducing dimensionality but the topic can get very complex. Our goal for this package was to streamline the process to assist users in gaining a deeper understanding of the topic with simplified functions. This article is a ["One-Stop Shop"](https://towardsdatascience.com/a-one-stop-shop-for-principal-component-analysis-5582fb7e0a9c) for PCA that provides additional information on the topic.
+

@@ -1,0 +1,17 @@
+Package: pcasimple
+Type: Package
+Title: Principle Component Analysis Simplified
+Version: 0.1.0
+Author: Stat 580 Group 2: Danielle Cortez, Daniel Cho, David Tu, Angelica Rivera
+Maintainer: Angelica Rivera <arivera7467@sdsu.edu>
+Description: This package serves as an aid to learn and conduct analysis of principal components. The functions of this package translates PCA into an ordered process that will be easier to follow, thus simplifying the process. The functions in this packages include 2D and 3D Scatter Plots, PCA values, and scree plots.
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Depends: R (>= 2.10)
+RoxygenNote: 7.2.1
+Imports: RColorBrewer, ggplot2, rgl, knitr
+VignetteBuilder: knitr
+Suggests: rmarkdown
+NeedsCompilation: no
+Packaged: 2022-12-12 23:24:21 UTC; angelicarivera
